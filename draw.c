@@ -7,34 +7,6 @@
 #include "matrix.h"
 
 
-  double calcX(int radius, double item, double numSides,double off){
-    double in = item/numSides * 2.0f*PI;
-    return radius * cos(in+off);
-  }
-  double calcY(int radius, double item, double numSides,double off){
-    double in = item/numSides * 2.0f*PI;
-    return radius * sin(in +off);
-  }
-  void drawNgon(int x0, int y0,int radius, int numSides,int offset,screen s, color c){
-    double off = offset * PI/180;
-    int x = x0+ calcX(radius, -2, numSides,off);
-    int y = y0+ calcY(radius, -2, numSides,off);
-    int tx = x0+ calcX(radius, -1, numSides,off);
-    int ty = y0+ calcY(radius, -1, numSides,off);
-    int t2x = x0+ calcX(radius, 0, numSides,off);
-    int t2y = y0+ calcY(radius, 0, numSides,off);
-    int item = 0;
-    while(item < numSides){
-      x = x0+ calcX(radius, -2+item, numSides,off);
-      y = y0+ calcY(radius, -2+item, numSides,off);
-      tx = x0+ calcX(radius, -1+item, numSides,off);
-      ty = y0+ calcY(radius, -1+item, numSides,off);
-      t2x = x0+ calcX(radius, item, numSides,off);
-      t2y = y0+ calcY(radius, item, numSides,off);
-        add_curve(x,y,tx,ty,t2x,t2y,10,s,c);
-        item++;
-    }
-  }
 void add_circle( struct matrix *edges,
                  double cx, double cy, double cz,
                  double r, double step ) {
