@@ -7,15 +7,34 @@
 #include "matrix.h"
 
 
-/*======== void add_circle() ==========
-  Inputs:   struct matrix * edges
-            double cx
-            double cy
-            double r
-            double step
-
-  Adds the circle at (cx, cy) with radius r to edges
-  ====================*/
+  double calcX(int radius, double item, double numSides,double off){
+    double in = item/numSides * 2.0f*PI;
+    return radius * cos(in+off);
+  }
+  double calcY(int radius, double item, double numSides,double off){
+    double in = item/numSides * 2.0f*PI;
+    return radius * sin(in +off);
+  }
+  void drawNgon(int x0, int y0,int radius, int numSides,int offset,screen s, color c){
+    double off = offset * PI/180;
+    int x = x0+ calcX(radius, -2, numSides,off);
+    int y = y0+ calcY(radius, -2, numSides,off);
+    int tx = x0+ calcX(radius, -1, numSides,off);
+    int ty = y0+ calcY(radius, -1, numSides,off);
+    int t2x = x0+ calcX(radius, 0, numSides,off);
+    int t2y = y0+ calcY(radius, 0, numSides,off);
+    int item = 0;
+    while(item < numSides){
+      x = x0+ calcX(radius, -2+item, numSides,off);
+      y = y0+ calcY(radius, -2+item, numSides,off);
+      tx = x0+ calcX(radius, -1+item, numSides,off);
+      ty = y0+ calcY(radius, -1+item, numSides,off);
+      t2x = x0+ calcX(radius, item, numSides,off);
+      t2y = y0+ calcY(radius, item, numSides,off);
+        add_curve(x,y,tx,ty,t2x,t2y,10,s,c);
+        item++;
+    }
+  }
 void add_circle( struct matrix *edges,
                  double cx, double cy, double cz,
                  double r, double step ) {
@@ -58,6 +77,7 @@ void add_curve( struct matrix *edges,
                 double x2, double y2,
                 double x3, double y3,
                 double step, int type ) {
+                  const double iter = 1/step;
                   struct matrix* px = generate_curve_coefs( x0, x1,x2, x3, type);
                   struct matrix* py = generate_curve_coefs( y0, y1,y2, y3, type);
                   double t = 0;
@@ -65,11 +85,9 @@ void add_curve( struct matrix *edges,
                   double ty = y0;
                   double nx,ny;
                   while(t < 1){
-                    t+=1/step;
-                    if(t>1)t=1;
+                    t+=iter;
                     nx = px->m[3][0] + t * (px->m[2][0]+ t *(px->m[1][0]+t *px->m[0][0]));
-                    ny = (t * t * t * py->m[0][0]) + (t * t * py->m[1][0]) + (t * py->m[2][0]) + py->m[3][0];
-                    printf("%f\n",nx);
+                    ny = py->m[3][0] + t * (py->m[2][0]+ t *(py->m[1][0]+t *py->m[0][0]));
                     add_edge(edges,tx,ty,0,nx,ny,0);
                     tx = nx;
                     ty = ny;
